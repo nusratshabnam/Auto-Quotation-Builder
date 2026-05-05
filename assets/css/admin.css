@@ -1,0 +1,427 @@
+/**
+ * Service Quote Builder - Admin Styles
+ */
+
+/* Admin Page Styles */
+.sqb-admin {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.sqb-admin h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #1e293b;
+}
+
+.sqb-admin h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 15px;
+    color: #334155;
+}
+
+.sqb-admin h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 20px 0 10px;
+    color: #475569;
+}
+
+/* Navigation Tabs */
+.nav-tab-wrapper {
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 20px;
+}
+
+.nav-tab {
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+    text-decoration: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.nav-tab:hover {
+    color: #334155;
+}
+
+.nav-tab.nav-tab-active {
+    color: #2563eb;
+    border-bottom: 2px solid #2563eb;
+    margin-bottom: -2px;
+}
+
+/* Content Area */
+.sqb-admin-content {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Toolbar */
+.sqb-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.sqb-toolbar select {
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #334155;
+    background: white;
+}
+
+.sqb-count {
+    font-size: 14px;
+    color: #64748b;
+}
+
+/* Table Styles */
+.sqb-quotes-table {
+    margin-top: 15px;
+}
+
+.sqb-quotes-table th {
+    font-weight: 600;
+    color: #475569;
+    background: #f8fafc;
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.sqb-quotes-table td {
+    padding: 15px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: top;
+}
+
+.sqb-quotes-table tr:hover td {
+    background: #f8fafc;
+}
+
+/* Checkbox Column */
+.sqb-col-check {
+    width: 40px;
+}
+
+/* Status Badges */
+.sqb-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.sqb-status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.sqb-status-completed {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.sqb-status-cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Action Buttons */
+.sqb-quotes-table .button {
+    margin-right: 5px;
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.sqb-quotes-table .sqb-delete {
+    color: #dc2626;
+}
+
+.sqb-quotes-table .sqb-delete:hover {
+    background: #fee2e2;
+    border-color: #fecaca;
+}
+
+/* Pagination */
+.sqb-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 5px;
+}
+
+.sqb-pagination a,
+.sqb-pagination span {
+    padding: 8px 14px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #475569;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.sqb-pagination a:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.sqb-pagination .current {
+    background: #2563eb;
+    color: white;
+    border-color: #2563eb;
+}
+
+/* Empty State */
+.sqb-empty {
+    text-align: center;
+    padding: 60px 20px !important;
+    color: #94a3b8;
+    font-size: 16px;
+}
+
+/* Settings Form */
+.sqb-admin form h2 {
+    display: none; /* Hide duplicate heading */
+}
+
+.sqb-admin .form-table th {
+    padding: 20px 0 20px 10px;
+    font-weight: 500;
+}
+
+.sqb-admin .form-table td {
+    padding: 15px 10px;
+}
+
+.sqb-admin input[type="text"],
+.sqb-admin input[type="email"],
+.sqb-admin input[type="number"],
+.sqb-admin select {
+    padding: 10px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 14px;
+    min-width: 200px;
+}
+
+.sqb-admin input:focus,
+.sqb-admin select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.sqb-admin .description {
+    color: #94a3b8;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+/* Usage Guide */
+.sqb-usage-guide {
+    max-width: 800px;
+}
+
+.sqb-usage-guide h2 {
+    margin-top: 0;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.sqb-usage-guide h3 {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #f1f5f9;
+    color: #1e293b;
+}
+
+.sqb-usage-guide p {
+    color: #475569;
+    line-height: 1.7;
+}
+
+.sqb-usage-guide ol,
+.sqb-usage-guide ul {
+    color: #475569;
+    line-height: 2;
+    padding-left: 25px;
+}
+
+.sqb-usage-guide code {
+    background: #f1f5f9;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-family: 'SF Mono', Consolas, monospace;
+    font-size: 14px;
+    color: #2563eb;
+}
+
+.sqb-usage-guide li {
+    margin-bottom: 5px;
+}
+
+/* Quote Modal */
+.sqb-admin-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+}
+
+.sqb-modal-inner {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    max-width: 700px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.sqb-modal-inner h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #1e293b;
+}
+
+.sqb-modal-inner .sqb-quote-section {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.sqb-modal-inner .sqb-quote-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.sqb-modal-inner .sqb-quote-section h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 10px;
+}
+
+.sqb-modal-inner .sqb-quote-section p {
+    margin: 5px 0;
+    color: #334155;
+}
+
+.sqb-modal-inner .sqb-quote-items {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.sqb-modal-inner .sqb-quote-items li {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #f8fafc;
+}
+
+.sqb-modal-inner .sqb-quote-items li:last-child {
+    border-bottom: none;
+}
+
+.sqb-modal-close {
+    margin-top: 25px;
+    width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 782px) {
+    .sqb-admin {
+        margin-left: -20px;
+        margin-right: -20px;
+        padding: 0 20px;
+    }
+
+    .sqb-quotes-table {
+        font-size: 13px;
+    }
+
+    .sqb-quotes-table th,
+    .sqb-quotes-table td {
+        padding: 10px 8px;
+    }
+
+    .sqb-quotes-table .button {
+        display: block;
+        margin: 5px 0;
+        width: 100%;
+    }
+
+    .sqb-toolbar {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+}
+
+/* Bulk Actions */
+#sqb-quotes-form .tablenav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+#sqb-quotes-form .tablenav select {
+    padding: 6px 10px;
+}
+
+#sqb-quotes-form .tablenav .button {
+    padding: 6px 15px;
+}
+
+/* Loading State */
+.sqb-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Notice Styles */
+.notice {
+    margin: 15px 0;
+    padding: 15px 20px;
+    border-radius: 8px;
+}
+
+.notice-success {
+    background: #d1fae5;
+    border-left: 4px solid #10b981;
+}
+
+.notice-success p {
+    margin: 0;
+    color: #065f46;
+}

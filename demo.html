@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Quote Builder - Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sqb-primary: #2563eb;
+            --sqb-primary-dark: #1d4ed8;
+            --sqb-secondary: #64748b;
+            --sqb-success: #10b981;
+            --sqb-warning: #f59e0b;
+            --sqb-danger: #ef4444;
+            --sqb-bg: #f8fafc;
+            --sqb-card-bg: #ffffff;
+            --sqb-text: #1e293b;
+            --sqb-text-light: #64748b;
+            --sqb-border: #e2e8f0;
+            --sqb-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --sqb-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --sqb-radius: 12px;
+            --sqb-radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--sqb-bg);
+            color: var(--sqb-text);
+            line-height: 1.6;
+        }
+
+        /* Container */
+        .sqb-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .sqb-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Header */
+        .sqb-header {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .sqb-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--sqb-text);
+            margin: 0 0 10px;
+        }
+
+        .sqb-subtitle {
+            font-size: 1.125rem;
+            color: var(--sqb-text-light);
+            margin: 0;
+        }
+
+        /* Progress Bar */
+        .sqb-progress-bar {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .sqb-progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--sqb-border);
+            transform: translateY(-50%);
+            z-index: 0;
+            margin: 0 40px;
+        }
+
+        .sqb-progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            z-index: 1;
+            min-width: 80px;
+        }
+
+        .sqb-step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--sqb-card-bg);
+            border: 3px solid var(--sqb-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--sqb-text-light);
+            transition: all 0.3s ease;
+        }
+
+        .sqb-step-label {
+            font-size: 0.875rem;
+            color: var(--sqb-text-light);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .sqb-progress-step.active .sqb-step-number {
+            background: var(--sqb-primary);
+            border-color: var(--sqb-primary);
+            color: white;
+        }
+
+        .sqb-progress-step.active .sqb-step-label {
+            color: var(--sqb-primary);
+            font-weight: 600;
+        }
+
+        .sqb-progress-step.completed .sqb-step-number {
+            background: var(--sqb-success);
+            border-color: var(--sqb-success);
+            color: white;
+        }
+
+        /* Main Form Area */
+        .sqb-form {
+            background: var(--sqb-card-bg);
+            border-radius: var(--sqb-radius);
+            padding: 30px;
+            box-shadow: var(--sqb-shadow);
+        }
+
+        .sqb-step {
+            display: none;
+        }
+
+        .sqb-step.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .sqb-step-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--sqb-text);
+            margin: 0 0 20px;
+        }
+
+        .sqb-step-desc {
+            color: var(--sqb-text-light);
+            margin: 0 0 20px;
+        }
+
+        .sqb-sub-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--sqb-text);
+            margin: 30px 0 15px;
+            padding-top: 20px;
+            border-top: 1px solid var(--sqb-border);
+        }
+
+        /* Grid Layouts */
+        .sqb-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .sqb-vehicle-grid,
+        .sqb-protection-grid {
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+
+        .sqb-condition-grid {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .sqb-polishing-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        .sqb-extras-grid {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+
+        .sqb-kits-grid {
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+
+        /* Card Styles */
+        .sqb-card {
+            background: var(--sqb-card-bg);
+            border: 2px solid var(--sqb-border);
+            border-radius: var(--sqb-radius);
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .sqb-card:hover {
+            border-color: var(--sqb-primary);
+            box-shadow: var(--sqb-shadow);
+            transform: translateY(-2px);
+        }
+
+        .sqb-card.selected {
+            border-color: var(--sqb-primary);
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
+
+        .sqb-card-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
+            color: var(--sqb-primary);
+        }
+
+        .sqb-card-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .sqb-card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--sqb-text);
+            margin: 0 0 10px;
+        }
+
+        .sqb-card-examples {
+            font-size: 0.875rem;
+            color: var(--sqb-text-light);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* Condition Card */
+        .sqb-card-cond {
+            text-align: left;
+        }
+
+        .sqb-condition-visual {
+            width: 100%;
+            height: 80px;
+            margin-bottom: 15px;
+            border-radius: var(--sqb-radius-sm);
+            overflow: hidden;
+        }
+
+        .sqb-we-say {
+            font-size: 0.875rem;
+            color: var(--sqb-text-light);
+            margin: 10px 0 0;
+            font-style: italic;
+        }
+
+        /* Polishing Card */
+        .sqb-card-poly {
+            position: relative;
+        }
+
+        .sqb-polish-badge {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--sqb-secondary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .sqb-badge-mid { background: var(--sqb-primary); }
+        .sqb-badge-premium { background: var(--sqb-success); }
+        .sqb-badge-ultimate { background: linear-gradient(135deg, #7c3aed, #db2777); }
+
+        .sqb-hours {
+            font-size: 0.875rem;
+            color: var(--sqb-text-light);
+            margin: 15px 0;
+            font-weight: 500;
+        }
+
+        .sqb-poly-desc {
+            font-size: 0.875rem;
+            color: var(--sqb-text-light);
+            margin: 0 0 15px;
+            line-height: 1.5;
+        }
+
+        .sqb-price-tag {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--sqb-primary);
+            margin-top: 10px;
+        }
+
+        /* Protection Card */
+        .sqb-card-pro {
+            text-align: left;
+        }
+
+        .sqb-card-featured {
+            border-color: var(--sqb-primary);
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
+
+        .sqb-card-premium {
+            border-color: #7c3aed;
+            background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+        }
+
+        .sqb-featured-badge {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: var(--sqb-primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .sqb-premium-badge {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: linear-gradient(135deg, #7c3aed, #db2777);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .sqb-pro-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+
+        .sqb-pro-header h3 {
+            margin: 0;
+            font-size: 1.125rem;
+        }
+
+        .sqb-duration {
+            font-size: 0.75rem;
+            color: var(--sqb-text-light);
+            background: var(--sqb-bg);
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .sqb-ratings {
+            margin-bottom: 15px;
+        }
+
+        .sqb-rating {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .sqb-rating span {
+            font-size: 0.75rem;
+            color: var(--sqb-text-light);
+            min-width: 100px;
+        }
+
+        .sqb-rating-bar {
+            flex: 1;
+            height: 6px;
+            background: var(--sqb-border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .sqb-rating-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--sqb-primary), #60a5fa);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        /* Checkbox Card */
+        .sqb-checkbox-card {
+            display: block;
+            background: var(--sqb-card-bg);
+            border: 2px solid var(--sqb-border);
+            border-radius: var(--sqb-radius);
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sqb-checkbox-card:hover {
+            border-color: var(--sqb-primary);
+        }
+
+        .sqb-checkbox-card.checked {
+            border-color: var(--sqb-primary);
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
+
+        .sqb-checkbox-card input {
+            display: none;
+        }
+
+        .sqb-checkbox-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .sqb-checkbox-icon {
+            width: 40px;
+            height: 40px;
+            color: var(--sqb-primary);
+            flex-shrink: 0;
+        }
+
+        .sqb-checkbox-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .sqb-checkbox-label {
+            flex: 1;
+            font-weight: 500;
+            color: var(--sqb-text);
+        }
+
+        .sqb-checkbox-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--sqb-primary);
+        }
+
+        .sqb-checkbox-hours {
+            font-size: 0.875rem;
+            color: var(--sqb-text-light);
+        }
+
+        /* Form Styles */
+        .sqb-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .sqb-form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sqb-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sqb-form-full {
+            grid-column: 1 / -1;
+        }
+
+        .sqb-form-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--sqb-text);
+        }
+
+        .sqb-form-group input,
+        .sqb-form-group select,
+        .sqb-form-group textarea {
+            padding: 12px 16px;
+            border: 2px solid var(--sqb-border);
+            border-radius: var(--sqb-radius-sm);
+            font-size: 1rem;
+            color: var(--sqb-text);
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .sqb-form-group input:focus,
+        .sqb-form-group select:focus,
+        .sqb-form-group textarea:focus {
+            outline: none;
+            border-color: var(--sqb-primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Navigation Buttons */
+        .sqb-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--sqb-border);
+        }
+
+        .sqb-btn {
+            padding: 14px 28px;
+            border-radius: var(--sqb-radius-sm);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sqb-btn-primary {
+            background: var(--sqb-primary);
+            color: white;
+        }
+
+        .sqb-btn-primary:hover {
+            background: var(--sqb-primary-dark);
+        }
+
+        .sqb-btn-secondary {
+            background: var(--sqb-bg);
+            color: var(--sqb-text);
+            border: 2px solid var(--sqb-border);
+        }
+
+        .sqb-btn-secondary:hover {
+            background: var(--sqb-border);
+        }
+
+        .sqb-btn-submit {
+            background: var(--sqb-success);
+            color: white;
+        }
+
+        .sqb-btn-submit:hover {
+            background: #059669;
+        }
+
+        .sqb-btn-save {
+            background: transparent;
+            color: var(--sqb-primary);
+            border: 2px solid var(--sqb-primary);
+            width: 100%;
+            justify-content: center;
+        }
+
+        .sqb-btn-save:hover {
+            background: var(--sqb-primary);
+            color: white;
+        }
+
+        /* Sidebar */
+        .sqb-sidebar {
+            position: sticky;
+            top: 30px;
+            height: fit-content;
+        }
+
+        .sqb-totals {
+            background: var(--sqb-card-bg);
+            border-radius: var(--sqb-radius);
+            padding: 25px;
+            box-shadow: var(--sqb-shadow);
+        }
+
+        .sqb-totals h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--sqb-text);
+            margin: 0 0 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--sqb-border);
+        }
+
+        .sqb-total-items {
+            margin-bottom: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .sqb-total-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--sqb-border);
+            font-size: 0.875rem;
+        }
+
+        .sqb-total-item-name {
+            color: var(--sqb-text);
+            flex: 1;
+        }
+
+        .sqb-total-item-price {
+            color: var(--sqb-text-light);
+            font-weight: 500;
+        }
+
+        .sqb-total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            font-weight: 600;
+        }
+
+        .sqb-subtotal {
+            border-top: 2px solid var(--sqb-border);
+            margin-top: 10px;
+            padding-top: 15px;
+        }
+
+        .sqb-grand-total {
+            font-size: 1.5rem;
+            color: var(--sqb-primary);
+            border-top: 2px solid var(--sqb-primary);
+            padding-top: 15px;
+            margin-top: 5px;
+        }
+
+        .sqb-disclaimer {
+            font-size: 0.75rem;
+            color: var(--sqb-text-light);
+            margin: 15px 0 0;
+            font-style: italic;
+        }
+
+        .sqb-actions {
+            margin-top: 20px;
+        }
+
+        /* Modal */
+        .sqb-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+
+        .sqb-modal-content {
+            background: white;
+            border-radius: var(--sqb-radius);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        .sqb-modal-small {
+            max-width: 400px;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .sqb-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--sqb-text-light);
+            transition: color 0.3s ease;
+            background: none;
+            border: none;
+        }
+
+        .sqb-modal-close:hover {
+            color: var(--sqb-text);
+        }
+
+        .sqb-modal-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            color: var(--sqb-success);
+        }
+
+        .sqb-modal-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .sqb-modal-content h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--sqb-text);
+            margin: 0 0 15px;
+        }
+
+        .sqb-modal-content p {
+            color: var(--sqb-text-light);
+            margin: 0 0 20px;
+        }
+
+        .sqb-modal-message {
+            background: var(--sqb-bg);
+            padding: 15px;
+            border-radius: var(--sqb-radius-sm);
+            margin: 20px 0;
+        }
+
+        /* Toast */
+        .sqb-toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--sqb-text);
+            color: white;
+            padding: 15px 25px;
+            border-radius: var(--sqb-radius-sm);
+            box-shadow: var(--sqb-shadow-lg);
+            z-index: 10000;
+            animation: toastSlideIn 0.3s ease;
+        }
+
+        .sqb-toast.success { background: var(--sqb-success); }
+        .sqb-toast.error { background: var(--sqb-danger); }
+
+        @keyframes toastSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .sqb-container {
+                padding: 20px 15px;
+            }
+
+            .sqb-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .sqb-subtitle {
+                font-size: 1rem;
+            }
+
+            .sqb-progress-step {
+                min-width: 60px;
+            }
+
+            .sqb-step-number {
+                width: 32px;
+                height: 32px;
+                font-size: 0.875rem;
+            }
+
+            .sqb-step-label {
+                font-size: 0.75rem;
+            }
+
+            .sqb-form {
+                padding: 20px;
+            }
+
+            .sqb-step-title {
+                font-size: 1.25rem;
+            }
+
+            .sqb-sidebar {
+                position: relative;
+                top: 0;
+                margin-top: 20px;
+            }
+
+            .sqb-totals {
+                padding: 20px;
+            }
+
+            .sqb-btn {
+                padding: 12px 20px;
+                font-size: 0.875rem;
+            }
+
+            .sqb-navigation {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .sqb-btn-secondary,
+            .sqb-btn-primary {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sqb-container" id="sqb-quote-builder">
+        <div class="sqb-header">
+            <h1>Service Quote Builder</h1>
+            <p class="sqb-subtitle">Build your custom automotive protection package</p>
+        </div>
+
+        <!-- Progress Steps -->
+        <div class="sqb-progress-bar">
+            <div class="sqb-progress-step active" data-step="1">
+                <span class="sqb-step-number">1</span>
+                <span class="sqb-step-label">Vehicle</span>
+            </div>
+            <div class="sqb-progress-step" data-step="2">
+                <span class="sqb-step-number">2</span>
+                <span class="sqb-step-label">Condition</span>
+            </div>
+            <div class="sqb-progress-step" data-step="3">
+                <span class="sqb-step-number">3</span>
+                <span class="sqb-step-label">Polishing</span>
+            </div>
+            <div class="sqb-progress-step" data-step="4">
+                <span class="sqb-step-number">4</span>
+                <span class="sqb-step-label">Protection</span>
+            </div>
+            <div class="sqb-progress-step" data-step="5">
+                <span class="sqb-step-number">5</span>
+                <span class="sqb-step-label">Extras</span>
+            </div>
+            <div class="sqb-progress-step" data-step="6">
+                <span class="sqb-step-number">6</span>
+                <span class="sqb-step-label">Details</span>
+            </div>
+        </div>
+
+        <form id="sqb-form" class="sqb-form">
+            <!-- Step 1: Vehicle Type Selection -->
+            <div class="sqb-step active" data-step="1">
+                <h2 class="sqb-step-title">Select Your Vehicle Type</h2>
+                <div class="sqb-grid sqb-vehicle-grid">
+                    <div class="sqb-card" data-value="small" data-price="0">
+                        <div class="sqb-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 17h14M7 17l-2-6h14l-2 6M5 17a2 2 0 1 0 4 0 2 2 0 1 0-4 0M15 17a2 2 0 1 0 4 0 2 2 0 1 0-4 0M8 11h8M9 8h6"/>
+                            </svg>
+                        </div>
+                        <h3>Small/Compact</h3>
+                        <p class="sqb-card-examples">Audi A3, BMW 2 Series, VW Golf GTI, Mini Cooper</p>
+                    </div>
+                    <div class="sqb-card" data-value="mid" data-price="50">
+                        <div class="sqb-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 17h14M7 17l-2-6h14l-2 6M5 17a2 2 0 1 0 4 0 2 2 0 1 0-4 0M15 17a2 2 0 1 0 4 0 2 2 0 1 0-4 0M6 10h12M7 7h10"/>
+                            </svg>
+                        </div>
+                        <h3>Mid Size</h3>
+                        <p class="sqb-card-examples">Lexus ES, Ford Fusion, Tesla Model 3, Chevy Malibu, Audi A5</p>
+                    </div>
+                    <div class="sqb-card" data-value="full" data-price="100">
+                        <div class="sqb-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 17h14M7 17l-2-6h14l-2 6M5 17a2 2 0 1 0 4 0 2 2 0 1 0-4 0M15 17a2 2 0 1 0 4 0 2 2 0 1 0-4 0M6 9h12M7 6h10M9 4h6"/>
+                            </svg>
+                        </div>
+                        <h3>Full Size</h3>
+                        <p class="sqb-card-examples">Large Sedan, Dodge Charger, BMW 5 Series, Tesla Model S</p>
+                    </div>
+                    <div class="sqb-card" data-value="large" data-price="150">
+                        <div class="sqb-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 17h14M7 17l-2-6h14l-2 6M5 17a2 2 0 1 0 4 0 2 2 0 1 0-4 0M15 17a2 2 0 1 0 4 0 2 2 0 1 0-4 0M4 11h16M5 8h14M7 5h10M8 3h8"/>
+                            </svg>
+                        </div>
+                        <h3>Large/X-Large</h3>
+                        <p class="sqb-card-examples">Large/XL SUV, Extended Cab Pickup, Range Rover, BMW 7 Series</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Paint Condition -->
+            <div class="sqb-step" data-step="2">
+                <h2 class="sqb-step-title">Assess Your Paint Condition</h2>
+                <div class="sqb-grid sqb-condition-grid">
+                    <div class="sqb-card sqb-card-cond" data-value="new" data-hours="0">
+                        <div class="sqb-condition-visual">
+                            <svg viewBox="0 0 100 60" fill="none">
+                                <rect x="5" y="5" width="90" height="50" rx="3" fill="#e8f5e9" stroke="#4caf50" stroke-width="2"/>
+                                <circle cx="30" cy="30" r="8" fill="#4caf50" opacity="0.3"/>
+                                <circle cx="70" cy="25" r="5" fill="#4caf50" opacity="0.2"/>
+                            </svg>
+                        </div>
+                        <h3>New Car / Near Perfect</h3>
+                        <p class="sqb-we-say">Perfect for brand new vehicles or those in excellent condition with minimal defects.</p>
+                    </div>
+                    <div class="sqb-card sqb-card-cond" data-value="light" data-hours="1">
+                        <div class="sqb-condition-visual">
+                            <svg viewBox="0 0 100 60" fill="none">
+                                <rect x="5" y="5" width="90" height="50" rx="3" fill="#fff8e1" stroke="#ffc107" stroke-width="2"/>
+                                <line x1="20" y1="15" x2="35" y2="30" stroke="#ffc107" stroke-width="1.5" opacity="0.5"/>
+                                <line x1="60" y1="20" x2="75" y2="35" stroke="#ffc107" stroke-width="1.5" opacity="0.4"/>
+                            </svg>
+                        </div>
+                        <h3>Light Swirls</h3>
+                        <p class="sqb-we-say">Shows minor swirl marks and light scratches from washing. Ideal for enhancement polish.</p>
+                    </div>
+                    <div class="sqb-card sqb-card-cond" data-value="medium" data-hours="2">
+                        <div class="sqb-condition-visual">
+                            <svg viewBox="0 0 100 60" fill="none">
+                                <rect x="5" y="5" width="90" height="50" rx="3" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+                                <line x1="15" y1="10" x2="40" y2="35" stroke="#ff9800" stroke-width="2" opacity="0.6"/>
+                                <line x1="55" y1="15" x2="85" y2="45" stroke="#ff9800" stroke-width="2" opacity="0.7"/>
+                            </svg>
+                        </div>
+                        <h3>Large Swirls & Some Deep Scratches</h3>
+                        <p class="sqb-we-say">Visible scratches and swirl marks require more intensive polishing work.</p>
+                    </div>
+                    <div class="sqb-card sqb-card-cond" data-value="deep" data-hours="3">
+                        <div class="sqb-condition-visual">
+                            <svg viewBox="0 0 100 60" fill="none">
+                                <rect x="5" y="5" width="90" height="50" rx="3" fill="#ffebee" stroke="#f44336" stroke-width="2"/>
+                                <line x1="10" y1="8" x2="45" y2="43" stroke="#f44336" stroke-width="3" opacity="0.8"/>
+                                <line x1="50" y1="10" x2="90" y2="50" stroke="#f44336" stroke-width="3" opacity="0.9"/>
+                            </svg>
+                        </div>
+                        <h3>Deep Scratches On All Panels</h3>
+                        <p class="sqb-we-say">Significant defects on all paint surfaces requiring extensive correction work.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Polishing Selection -->
+            <div class="sqb-step" data-step="3">
+                <h2 class="sqb-step-title">Select Polishing Service</h2>
+                <div class="sqb-grid sqb-polishing-grid">
+                    <div class="sqb-card sqb-card-poly" data-value="single" data-price="150" data-hours="7-10">
+                        <div class="sqb-polish-badge">Basic</div>
+                        <h3>Single Stage Polish</h3>
+                        <div class="sqb-hours">7-10 hours</div>
+                        <p class="sqb-poly-desc">One-step polishing to remove minor defects and add gloss.</p>
+                        <div class="sqb-price-tag">$150</div>
+                    </div>
+                    <div class="sqb-card sqb-card-poly" data-value="enhancement" data-price="250" data-hours="13-19">
+                        <div class="sqb-polish-badge sqb-badge-mid">Popular</div>
+                        <h3>Enhancement</h3>
+                        <div class="sqb-hours">13-19 hours</div>
+                        <p class="sqb-poly-desc">Two-stage polish for enhanced gloss and improved paint clarity.</p>
+                        <div class="sqb-price-tag">$250</div>
+                    </div>
+                    <div class="sqb-card sqb-card-poly" data-value="correction" data-price="400" data-hours="24-40">
+                        <div class="sqb-polish-badge sqb-badge-premium">Premium</div>
+                        <h3>Full Correction</h3>
+                        <div class="sqb-hours">24-40 hours</div>
+                        <p class="sqb-poly-desc">Complete paint correction to remove swirl marks, scratches, and defects.</p>
+                        <div class="sqb-price-tag">$400</div>
+                    </div>
+                    <div class="sqb-card sqb-card-poly" data-value="wetsand" data-price="700" data-hours="75-113">
+                        <div class="sqb-polish-badge sqb-badge-ultimate">Ultimate</div>
+                        <h3>Wet Sanding</h3>
+                        <div class="sqb-hours">75-113 hours</div>
+                        <p class="sqb-poly-desc">Advanced technique for removing deep scratches and restoring paint finish.</p>
+                        <div class="sqb-price-tag">$700</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Paint Protection Options -->
+            <div class="sqb-step" data-step="4">
+                <h2 class="sqb-step-title">Choose Paint Protection</h2>
+                <div class="sqb-grid sqb-protection-grid">
+                    <div class="sqb-card sqb-card-pro" data-value="c2" data-price="200" data-duration="6 months">
+                        <div class="sqb-pro-header">
+                            <h3>C2 Liquid Crystal</h3>
+                            <span class="sqb-duration">6 months</span>
+                        </div>
+                        <div class="sqb-ratings">
+                            <div class="sqb-rating"><span>Durability</span><div class="sqb-rating-bar"><div class="sqb-rating-fill" style="width: 40%"></div></div></div>
+                            <div class="sqb-rating"><span>Gloss</span><div class="sqb-rating-bar"><div class="sqb-rating-fill" style="width: 85%"></div></div></div>
+                            <div class="sqb-rating"><span>Easy Application</span><div class="sqb-rating-bar"><div class="sqb-rating-fill" style="width: 90%"></div></div></div>
+                        </div>
+                        <div class="sqb-price-tag">$200</div>
+                    </div>
+                    <div class="sqb-card sqb-card-pro" data-value="exo" data-price="350" data-duration="18 months">
+                        <div class="sqb-pro-header">
+                            <h3>EXO</h3>
+                            <span class="sqb-duration">18 months</span>
+                        </div>
+                        <div class="sqb-ratings">
+                            <div class="sqb-rating"><span>Durability</span><div class="sqb-rating-bar"><div class="sqb-rating-fill" style="width: 60%"></div></div></div>
+                            <div class="sqb-rating"><span>Gloss</span><div class="sqb-rating-bar"><div class="sqb-rating-fill" style="width: 75%"></div></div></div>
+                            <div class="sqb-rating"><span>Water Repellency</span><div class="sqb-rating-bar"><div class="sqb-rating-fill" style="width: 95%"></div></div></div>
+                        </div>
+                        <div class="sqb-price-tag">$350</div>
+                    </div>
+                    <div class="sqb-card sqb-card-pro" data-value="csl" data-price="550" data-duration="5 years">
+                        <div class="sqb-pro-header">
+                            <h3>Crystal Serum Light</h3>
+                            <span class="sqb-duration">5 Year Guarantee</span>
+                        </div>
+                        <div class="sqb-ratings">
+                            <div class="sqb-rating"><span>Durability</span><div class="sqb-rating-bar"><div class="sqb-rating-fill" style="width: 85%"></div></div></div>
+                            <div class="sqb-rating"><span>Chemical Resistance</span><div class="sqb-rating-bar"><div class="sqb-rating-fill" style="width: 95%"></div></div></div>
+                            <div class="sqb-rating"><span>Gloss</span><div class="sqb-rating-bar"><div class="sqb-rating-fill" style="width: 90%"></div></div></div>
+                        </div>
+                        <div class="sqb-price-tag">$550</div>
+                    </div>
+                    <div class="sqb-card sqb-card-pro" data-value="csl-exo" data-price="750" data-duration="5 years">
+                        <div class="sqb-pro-header">
+                            <h3>CSL + EXO</h3>
+                            <span class="sqb-duration">5 Year Guarantee</span>
+                        </div>
+                        <div class="sqb-ratings">
+                            <div class="sqb-rating"><span>Durability</span><div class="sqb-rating-bar"><div class="sqb-rating-fill" style="width: 95%"></div></div></div>
+                            <div class="sqb-rating"><span>Gloss</span><div class="sqb-rating-bar"><div class="sqb-rating-fill" style="width: 98%"></div></div></div>
+                            <div class="sqb-rating"><span>Swirl Resistance</span><div class="sqb-rating-bar"><div class="sqb-rating-fill" style="width: 90%"></div></div></div>
+                        </div>
+                        <div class="sqb-price-tag">$750</div>
+                    </div>
+                    <div class="sqb-card sqb-card-pro sqb-card-featured" data-value="csu" data-price="950" data-duration="9 years">
+                        <div class="sqb-featured-badge">Top Pick</div>
+                        <div class="sqb-pro-header">
+                            <h3>Crystal Serum Ultra</h3>
+                            <span class="sqb-duration">9 Year Guarantee</span>
+                        </div>
+                        <div class="sqb-ratings">
+                            <div class="sqb-rating"><span>Durability</span><div class="sqb-rating-bar"><div class="sqb-rating-fill" style="width: 100%"></div></div></div>
+                            <div class="sqb-rating"><span>Chemical Resistance</span><div class="sqb-rating-bar"><div class="sqb-rating-fill" style="width: 100%"></div></div></div>
+                            <div class="sqb-rating"><span>UV Resistance</span><div class="sqb-rating-bar"><div class="sqb-rating-fill" style="width: 95%"></div></div></div>
+                        </div>
+                        <div class="sqb-price-tag">$950</div>
+                    </div>
+                    <div class="sqb-card sqb-card-pro sqb-card-premium" data-value="csu-black" data-price="1200" data-duration="9 years">
+                        <div class="sqb-premium-badge">Premium Black</div>
+                        <div class="sqb-pro-header">
+                            <h3>CSU Black</h3>
+                            <span class="sqb-duration">9 Year Guarantee</span>
+                        </div>
+                        <div class="sqb-ratings">
+                            <div class="sqb-rating"><span>Durability</span><div class="sqb-rating-bar"><div class="sqb-rating-fill" style="width: 100%"></div></div></div>
+                            <div class="sqb-rating"><span>Gloss</span><div class="sqb-rating-bar"><div class="sqb-rating-fill" style="width: 100%"></div></div></div>
+                            <div class="sqb-rating"><span>Dirt Repellency</span><div class="sqb-rating-bar"><div class="sqb-rating-fill" style="width: 98%"></div></div></div>
+                        </div>
+                        <div class="sqb-price-tag">$1,200</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Additional Protection (Checkboxes) -->
+            <div class="sqb-step" data-step="5">
+                <h2 class="sqb-step-title">Additional Protection Services</h2>
+                <p class="sqb-step-desc">Select any additional services you would like to add:</p>
+                <div class="sqb-grid sqb-extras-grid">
+                    <label class="sqb-checkbox-card">
+                        <input type="checkbox" data-name="Windscreen & All Exterior Glass" data-price="80" data-hours="1">
+                        <div class="sqb-checkbox-content">
+                            <span class="sqb-checkbox-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                    <path d="M3 9h18M9 3v18"/>
+                                </svg>
+                            </span>
+                            <span class="sqb-checkbox-label">Windscreen & All Exterior Glass</span>
+                            <span class="sqb-checkbox-price">$80</span>
+                            <span class="sqb-checkbox-hours">1 hour</span>
+                        </div>
+                    </label>
+                    <label class="sqb-checkbox-card">
+                        <input type="checkbox" data-name="Rims" data-price="100" data-hours="2">
+                        <div class="sqb-checkbox-content">
+                            <span class="sqb-checkbox-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="9"/>
+                                    <circle cx="12" cy="12" r="4"/>
+                                    <line x1="12" y1="3" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="21"/>
+                                    <line x1="3" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="21" y2="12"/>
+                                </svg>
+                            </span>
+                            <span class="sqb-checkbox-label">Rims</span>
+                            <span class="sqb-checkbox-price">$100</span>
+                            <span class="sqb-checkbox-hours">2 hours</span>
+                        </div>
+                    </label>
+                    <label class="sqb-checkbox-card">
+                        <input type="checkbox" data-name="Leather or Fabric Seats Including Alcantara" data-price="120" data-hours="1">
+                        <div class="sqb-checkbox-content">
+                            <span class="sqb-checkbox-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 18V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12"/><path d="M2 18h20"/>
+                                </svg>
+                            </span>
+                            <span class="sqb-checkbox-label">Leather or Fabric Seats</span>
+                            <span class="sqb-checkbox-price">$120</span>
+                            <span class="sqb-checkbox-hours">1 hour</span>
+                        </div>
+                    </label>
+                    <label class="sqb-checkbox-card">
+                        <input type="checkbox" data-name="Dashboard, Door Cards, Carpets" data-price="90" data-hours="1">
+                        <div class="sqb-checkbox-content">
+                            <span class="sqb-checkbox-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="8" width="18" height="12" rx="2"/>
+                                    <path d="M7 8V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                            </span>
+                            <span class="sqb-checkbox-label">Dashboard, Door Cards, Carpets</span>
+                            <span class="sqb-checkbox-price">$90</span>
+                            <span class="sqb-checkbox-hours">1 hour</span>
+                        </div>
+                    </label>
+                    <label class="sqb-checkbox-card">
+                        <input type="checkbox" data-name="Convertible Roof Option" data-price="150" data-hours="1">
+                        <div class="sqb-checkbox-content">
+                            <span class="sqb-checkbox-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 17h18l-3-8H6l-3 8z"/><path d="M6 9V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v3"/>
+                                </svg>
+                            </span>
+                            <span class="sqb-checkbox-label">Convertible Roof Option</span>
+                            <span class="sqb-checkbox-price">$150</span>
+                            <span class="sqb-checkbox-hours">1 hour</span>
+                        </div>
+                    </label>
+                    <label class="sqb-checkbox-card">
+                        <input type="checkbox" data-name="Total Surface Protection Bundle" data-price="200" data-hours="5">
+                        <div class="sqb-checkbox-content">
+                            <span class="sqb-checkbox-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+                                </svg>
+                            </span>
+                            <span class="sqb-checkbox-label">Total Surface Protection Bundle</span>
+                            <span class="sqb-checkbox-price">$200</span>
+                            <span class="sqb-checkbox-hours">5 hours</span>
+                        </div>
+                    </label>
+                </div>
+
+                <h3 class="sqb-sub-title">Maintenance Kits (Optional Add-ons)</h3>
+                <div class="sqb-grid sqb-kits-grid">
+                    <label class="sqb-checkbox-card">
+                        <input type="checkbox" data-name="Essential Maintenance Kit" data-price="80">
+                        <div class="sqb-checkbox-content">
+                            <span class="sqb-checkbox-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                                </svg>
+                            </span>
+                            <span class="sqb-checkbox-label">Essential Maintenance Kit</span>
+                            <span class="sqb-checkbox-price">$80</span>
+                        </div>
+                    </label>
+                    <label class="sqb-checkbox-card">
+                        <input type="checkbox" data-name="Basic Maintenance Kit" data-price="120">
+                        <div class="sqb-checkbox-content">
+                            <span class="sqb-checkbox-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                    <path d="M9 9h6v6H9z"/>
+                                </svg>
+                            </span>
+                            <span class="sqb-checkbox-label">Basic Maintenance Kit</span>
+                            <span class="sqb-checkbox-price">$120</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Step 6: Customer Details Form -->
+            <div class="sqb-step" data-step="6">
+                <h2 class="sqb-step-title">Complete Your Reservation</h2>
+                <div class="sqb-form-grid">
+                    <div class="sqb-form-group">
+                        <label for="customer_name">Full Name *</label>
+                        <input type="text" id="customer_name" name="customer_name" required>
+                    </div>
+                    <div class="sqb-form-group">
+                        <label for="customer_email">Email Address *</label>
+                        <input type="email" id="customer_email" name="customer_email" required>
+                    </div>
+                    <div class="sqb-form-group">
+                        <label for="customer_phone">Contact Number *</label>
+                        <input type="tel" id="customer_phone" name="customer_phone" required>
+                    </div>
+                    <div class="sqb-form-group">
+                        <label for="vehicle_make">Vehicle Make *</label>
+                        <input type="text" id="vehicle_make" name="vehicle_make" placeholder="e.g., BMW, Mercedes, Tesla" required>
+                    </div>
+                    <div class="sqb-form-group">
+                        <label for="vehicle_model">Vehicle Model *</label>
+                        <input type="text" id="vehicle_model" name="vehicle_model" placeholder="e.g., M3, E-Class, Model S" required>
+                    </div>
+                    <div class="sqb-form-group">
+                        <label for="preferred_date">Preferred Service Date</label>
+                        <input type="date" id="preferred_date" name="preferred_date">
+                    </div>
+                    <div class="sqb-form-group sqb-form-full">
+                        <label for="address">Full Address</label>
+                        <textarea id="address" name="address" rows="3"></textarea>
+                    </div>
+                    <div class="sqb-form-group sqb-form-full">
+                        <label for="country">Country/Region</label>
+                        <select id="country" name="country">
+                            <option value="">Select country...</option>
+                            <option value="US">United States</option>
+                            <option value="UK">United Kingdom</option>
+                            <option value="CA">Canada</option>
+                            <option value="AU">Australia</option>
+                            <option value="DE">Germany</option>
+                            <option value="FR">France</option>
+                            <option value="NL">Netherlands</option>
+                            <option value="BE">Belgium</option>
+                            <option value="IE">Ireland</option>
+                            <option value="SE">Sweden</option>
+                            <option value="NO">Norway</option>
+                            <option value="DK">Denmark</option>
+                            <option value="FI">Finland</option>
+                            <option value="IT">Italy</option>
+                            <option value="ES">Spain</option>
+                            <option value="PT">Portugal</option>
+                            <option value="PL">Poland</option>
+                            <option value="AT">Austria</option>
+                            <option value="CH">Switzerland</option>
+                            <option value="JP">Japan</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="sqb-navigation">
+                <button type="button" class="sqb-btn sqb-btn-secondary" id="sqb-prev" style="display: none;">Previous</button>
+                <button type="button" class="sqb-btn sqb-btn-primary" id="sqb-next">Next</button>
+                <button type="button" class="sqb-btn sqb-btn-submit" id="sqb-submit" style="display: none;">Submit Quote Request</button>
+            </div>
+        </form>
+
+        <!-- Running Total Sidebar -->
+        <div class="sqb-sidebar">
+            <div class="sqb-totals">
+                <h3>Your Quote</h3>
+                <div class="sqb-total-items" id="sqb-total-items">
+                    <!-- Dynamic items -->
+                </div>
+                <div class="sqb-total-row sqb-subtotal">
+                    <span>Subtotal</span>
+                    <span id="sqb-subtotal">$0.00</span>
+                </div>
+                <div class="sqb-total-row sqb-grand-total">
+                    <span>Total *</span>
+                    <span id="sqb-grand-total">$0.00</span>
+                </div>
+                <p class="sqb-disclaimer">* All estimates require a visual inspection of your vehicle before a final quote can be made.</p>
+            </div>
+            <div class="sqb-actions">
+                <button type="button" class="sqb-btn sqb-btn-save" id="sqb-save-cart">Save Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="sqb-modal" id="sqb-success-modal">
+        <div class="sqb-modal-content">
+            <button class="sqb-modal-close">&times;</button>
+            <div class="sqb-modal-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+            </div>
+            <h2>Thank You!</h2>
+            <p>Your quote request has been submitted successfully.</p>
+            <p class="sqb-modal-message">We will contact you within 24-48 hours to discuss your requirements.</p>
+            <button type="button" class="sqb-btn sqb-btn-primary sqb-modal-btn">Start New Quote</button>
+        </div>
+    </div>
+
+    <!-- Save Cart Modal -->
+    <div class="sqb-modal" id="sqb-save-modal">
+        <div class="sqb-modal-content sqb-modal-small">
+            <button class="sqb-modal-close">&times;</button>
+            <h2>Save Your Quote</h2>
+            <p>Enter your email to save this quote and get a shareable link:</p>
+            <div class="sqb-form-group">
+                <label for="save_email">Email Address</label>
+                <input type="email" id="save_email" name="save_email" required>
+            </div>
+            <button type="button" class="sqb-btn sqb-btn-primary" id="sqb-confirm-save">Save Quote</button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const SQB = {
+                currentStep: 1,
+                totalSteps: 6,
+                quoteData: {
+                    items: [],
+                    vehicle: null,
+                    condition: null,
+                    polishing: null,
+                    protection: null,
+                    extras: [],
+                    kits: []
+                },
+
+                init: function() {
+                    this.bindEvents();
+                    this.updateProgressBar();
+                },
+
+                bindEvents: function() {
+                    $('#sqb-next').on('click', () => this.nextStep());
+                    $('#sqb-prev').on('click', () => this.prevStep());
+                    $('#sqb-submit').on('click', () => this.submitQuote());
+                    $('#sqb-save-cart').on('click', () => this.showSaveModal());
+                    $('#sqb-confirm-save').on('click', () => this.saveQuote());
+                    $('.sqb-modal-btn').on('click', () => this.resetBuilder());
+                    $('.sqb-modal-close').on('click', function() {
+                        $(this).closest('.sqb-modal').hide();
+                    });
+                    $('.sqb-modal').on('click', function(e) {
+                        if ($(e.target).hasClass('sqb-modal')) {
+                            $(this).hide();
+                        }
+                    });
+
+                    // Vehicle cards
+                    $('.sqb-vehicle-grid .sqb-card').on('click', function() {
+                        const value = $(this).data('value');
+                        const price = parseInt($(this).data('price')) || 0;
+                        SQB.selectVehicle(value, price);
+                    });
+
+                    // Condition cards
+                    $('.sqb-condition-grid .sqb-card-cond').on('click', function() {
+                        const value = $(this).data('value');
+                        SQB.selectCondition(value);
+                    });
+
+                    // Polishing cards
+                    $('.sqb-polishing-grid .sqb-card-poly').on('click', function() {
+                        const value = $(this).data('value');
+                        const price = parseInt($(this).data('price')) || 0;
+                        SQB.selectPolishing(value, price);
+                    });
+
+                    // Protection cards
+                    $('.sqb-protection-grid .sqb-card-pro').on('click', function() {
+                        const value = $(this).data('value');
+                        const price = parseInt($(this).data('price')) || 0;
+                        const duration = $(this).data('duration') || '';
+                        SQB.selectProtection(value, price, duration);
+                    });
+
+                    // Checkboxes
+                    $('.sqb-checkbox-card input[type="checkbox"]').on('change', function() {
+                        const $card = $(this).closest('.sqb-checkbox-card');
+                        const name = $(this).data('name');
+                        const price = parseInt($(this).data('price')) || 0;
+
+                        if ($(this).is(':checked')) {
+                            $card.addClass('checked');
+                            this.quoteData.items = this.quoteData.items.filter(item => item.name !== name);
+                            this.quoteData.items.push({ type: 'extra', name: name, price: price });
+                        } else {
+                            $card.removeClass('checked');
+                            this.quoteData.items = this.quoteData.items.filter(item => item.name !== name);
+                        }
+                        this.updateTotals();
+                    }.bind(this));
+                },
+
+                selectVehicle: function(value, price) {
+                    this.quoteData.vehicle = value;
+                    this.quoteData.items = this.quoteData.items.filter(item => item.type !== 'vehicle');
+                    this.quoteData.items.push({ type: 'vehicle', name: this.getVehicleLabel(value), price: price });
+                    $('.sqb-vehicle-grid .sqb-card').removeClass('selected');
+                    $(`.sqb-vehicle-grid .sqb-card[data-value="${value}"]`).addClass('selected');
+                    this.updateTotals();
+                },
+
+                selectCondition: function(value) {
+                    this.quoteData.condition = value;
+                    this.quoteData.items = this.quoteData.items.filter(item => item.type !== 'condition');
+                    this.quoteData.items.push({ type: 'condition', name: this.getConditionLabel(value), price: 0 });
+                    $('.sqb-condition-grid .sqb-card-cond').removeClass('selected');
+                    $(`.sqb-condition-grid .sqb-card-cond[data-value="${value}"]`).addClass('selected');
+                    this.updateTotals();
+                },
+
+                selectPolishing: function(value, price) {
+                    this.quoteData.polishing = value;
+                    this.quoteData.items = this.quoteData.items.filter(item => item.type !== 'polishing');
+                    this.quoteData.items.push({ type: 'polishing', name: this.getPolishingLabel(value), price: price });
+                    $('.sqb-polishing-grid .sqb-card-poly').removeClass('selected');
+                    $(`.sqb-polishing-grid .sqb-card-poly[data-value="${value}"]`).addClass('selected');
+                    this.updateTotals();
+                },
+
+                selectProtection: function(value, price, duration) {
+                    this.quoteData.protection = value;
+                    this.quoteData.items = this.quoteData.items.filter(item => item.type !== 'protection');
+                    this.quoteData.items.push({ type: 'protection', name: this.getProtectionLabel(value, duration), price: price });
+                    $('.sqb-protection-grid .sqb-card-pro').removeClass('selected');
+                    $(`.sqb-protection-grid .sqb-card-pro[data-value="${value}"]`).addClass('selected');
+                    this.updateTotals();
+                },
+
+                getVehicleLabel: function(v) {
+                    const labels = { 'small': 'Small/Compact Vehicle', 'mid': 'Mid Size Vehicle', 'full': 'Full Size Vehicle', 'large': 'Large/X-Large Vehicle' };
+                    return labels[v] || v;
+                },
+                getConditionLabel: function(v) {
+                    const labels = { 'new': 'New Car / Near Perfect', 'light': 'Light Swirls', 'medium': 'Large Swirls & Some Deep Scratches', 'deep': 'Deep Scratches On All Panels' };
+                    return labels[v] || v;
+                },
+                getPolishingLabel: function(v) {
+                    const labels = { 'single': 'Single Stage Polish', 'enhancement': 'Enhancement', 'correction': 'Full Correction', 'wetsand': 'Wet Sanding' };
+                    return labels[v] || v;
+                },
+                getProtectionLabel: function(v, d) {
+                    const labels = {
+                        'c2': `C2 Liquid Crystal (${d})`,
+                        'exo': `EXO (${d})`,
+                        'csl': `Crystal Serum Light (${d})`,
+                        'csl-exo': `CSL + EXO (${d})`,
+                        'csu': `Crystal Serum Ultra (${d})`,
+                        'csu-black': `CSU Black (${d})`
+                    };
+                    return labels[v] || v;
+                },
+
+                updateTotals: function() {
+                    const $itemsContainer = $('#sqb-total-items');
+                    $itemsContainer.empty();
+                    let subtotal = 0;
+
+                    this.quoteData.items.forEach(item => {
+                        subtotal += item.price;
+                        $itemsContainer.append(
+                            `<div class="sqb-total-item">
+                                <span class="sqb-total-item-name">${item.name}</span>
+                                <span class="sqb-total-item-price">$${item.price.toFixed(2)}</span>
+                            </div>`
+                        );
+                    });
+
+                    $('#sqb-subtotal').text(`$${subtotal.toFixed(2)}`);
+                    $('#sqb-grand-total').text(`$${subtotal.toFixed(2)}`);
+                },
+
+                updateProgressBar: function() {
+                    $('.sqb-progress-step').each(function() {
+                        const step = parseInt($(this).data('step'));
+                        $(this).removeClass('active completed');
+                        if (step === SQB.currentStep) $(this).addClass('active');
+                        else if (step < SQB.currentStep) $(this).addClass('completed');
+                    });
+                },
+
+                nextStep: function() {
+                    if (!this.validateCurrentStep()) {
+                        this.showToast('Please complete the current step before proceeding.', 'error');
+                        return;
+                    }
+                    if (this.currentStep < this.totalSteps) {
+                        this.currentStep++;
+                        this.showStep(this.currentStep);
+                        this.updateProgressBar();
+                        this.updateNavigationButtons();
+                    }
+                },
+
+                prevStep: function() {
+                    if (this.currentStep > 1) {
+                        this.currentStep--;
+                        this.showStep(this.currentStep);
+                        this.updateProgressBar();
+                        this.updateNavigationButtons();
+                    }
+                },
+
+                showStep: function(step) {
+                    $('.sqb-step').removeClass('active');
+                    $(`.sqb-step[data-step="${step}"]`).addClass('active');
+                },
+
+                validateCurrentStep: function() {
+                    switch (this.currentStep) {
+                        case 1: return this.quoteData.vehicle !== null;
+                        case 2: return this.quoteData.condition !== null;
+                        case 3: return this.quoteData.polishing !== null;
+                        case 4: return this.quoteData.protection !== null;
+                        default: return true;
+                    }
+                },
+
+                updateNavigationButtons: function() {
+                    $('#sqb-prev').toggle(this.currentStep > 1);
+                    if (this.currentStep < this.totalSteps) {
+                        $('#sqb-next').show();
+                        $('#sqb-submit').hide();
+                    } else {
+                        $('#sqb-next').hide();
+                        $('#sqb-submit').show();
+                    }
+                },
+
+                submitQuote: function() {
+                    const required = ['customer_name', 'customer_email', 'customer_phone', 'vehicle_make', 'vehicle_model'];
+                    for (const field of required) {
+                        if (!$('#' + field).val().trim()) {
+                            this.showToast('Please fill in all required fields.', 'error');
+                            return;
+                        }
+                    }
+                    // Simulate submission
+                    $('#sqb-success-modal').show();
+                },
+
+                showSaveModal: function() {
+                    $('#sqb-save-modal').show();
+                },
+
+                saveQuote: function() {
+                    const email = $('#save_email').val();
+                    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                        this.showToast('Please enter a valid email address.', 'error');
+                        return;
+                    }
+                    // Simulate save
+                    const shareCode = Math.random().toString(36).substring(2, 10).toUpperCase();
+                    $('#sqb-save-modal').hide();
+                    $('#sqb-success-modal').find('h2').text('Quote Saved!');
+                    $('#sqb-success-modal').find('.sqb-modal-message').html(`Share Code: <strong>${shareCode}</strong>`);
+                    $('#sqb-success-modal').show();
+                },
+
+                resetBuilder: function() {
+                    $('#sqb-form')[0].reset();
+                    this.quoteData = { items: [], vehicle: null, condition: null, polishing: null, protection: null, extras: [], kits: [] };
+                    $('.sqb-card').removeClass('selected');
+                    $('.sqb-checkbox-card').removeClass('checked');
+                    this.currentStep = 1;
+                    this.showStep(1);
+                    this.updateProgressBar();
+                    this.updateNavigationButtons();
+                    this.updateTotals();
+                    $('.sqb-modal').hide();
+                },
+
+                showToast: function(message, type) {
+                    $('.sqb-toast').remove();
+                    const $toast = $(`<div class="sqb-toast ${type}">${message}</div>`);
+                    $('body').append($toast);
+                    setTimeout(() => $toast.fadeOut(() => $(this).remove()), 4000);
+                }
+            };
+
+            $(document).ready(() => SQB.init());
+        })();
+    </script>
+</body>
+</html>
