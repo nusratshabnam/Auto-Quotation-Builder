@@ -142,6 +142,6 @@ For support, feature requests, or bug reports, please create an issue in the rep
 
 ---
 
-**Author**: MiniMax Agent
+**Author**: Nusrat Jahan Shabnam
 **Version**: 1.0.0
 **Last Updated**: 2026-05
