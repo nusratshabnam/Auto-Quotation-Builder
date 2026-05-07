@@ -4,7 +4,7 @@
  * Plugin URI: https://example.com/service-quote-builder
  * Description: A multi-step service configuration and quote builder for automotive services with dynamic pricing.
  * Version: 1.0.0
- * Author: MiniMax Agent
+ * Author: Nusrat Jahan Shabnam
  * Author URI: https://example.com
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
